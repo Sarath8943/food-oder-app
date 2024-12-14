@@ -15,10 +15,3 @@ const connectDB = async () => {
   }
 };
 module.exports = { PORT, connectDB };
-
-
-
-
-
-
-
