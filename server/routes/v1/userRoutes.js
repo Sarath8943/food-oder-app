@@ -1,10 +1,9 @@
 const e = require('express');
 const { userSignup, login, userProfile,checkUser, profileUpdate, userAccountDelete, userlogout, changePassword } = require('../../controllers/userControllers');
 const { userAuth } = require('../../middlewares/userAuth');
-const { passwordAuth } = require('../../middlewares/passwordAuth');
 const userRouter = require('express').Router()
 
-const router= e.Router();
+const router = e.Router();
 
 router.post('/signup', userSignup)
 router.post('/login', login)

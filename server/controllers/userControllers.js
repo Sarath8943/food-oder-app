@@ -1,7 +1,7 @@
 const userModel = require("../model/userModel.js");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../utils/token.js");
-const admin = require("../model/adminModel.js");
+
 
 const userSignup = async (req, res) => {
   try {
@@ -19,8 +19,7 @@ const userSignup = async (req, res) => {
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log(hashedPassword);
-
+    
     const newUser = new userModel({
       name,
       email,
@@ -53,7 +52,7 @@ const login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log(passwordMatch, "passwordMatch");
+  
 
     if (!passwordMatch) {
       return res.status(400).json({ error: "Incorrect password" });
@@ -99,7 +98,15 @@ const userlogout = async (req, res) => {
 
 const checkUser = async (req, res) => {
   try {
-    req.status(200).json({ message: "autherized user" });
+
+const userId = req.user.id
+  const user = await userModel.findById(userId)
+  if (!user){
+    return res.status(401).json({ message: "user not found"})
+  }
+const role = req.user.role
+
+    res.status(200).json({ message: "success ", role });
   } catch (error) {
     console.log(error);
     res
@@ -112,29 +119,28 @@ const changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
 
-    // Validate input fields
+   
     if (!oldPassword || !newPassword) {
       return res.status(400).json({ error: "Both old and new passwords are required." });
     }
 
-    // Fetch the user based on the ID from the authenticated request
     const user = await userModel.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
 
-    // Check if the old password is correct
+ 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Old password is incorrect." });
     }
 
-    // Hash the new password
+
     const salt = await bcrypt.genSalt();
     const hashedNewPassword = await bcrypt.hash(newPassword, salt);
 
-    // Update the user's password
+
     user.password = hashedNewPassword;
     await user.save();
 
@@ -177,14 +183,12 @@ const profileUpdate = async (req, res) => {
 
 const userAccountDelete = async (req, res) => {
   try {
-    const user = req.user;
-    if (!user) {
+    const userId = req.user.id;
+    if (!userId) {
       return res.status(404).json({ message: "User not fount" });
     }
 
-    await userModel.findByIdAndDelete(user._id);
-
-    res.clearCookie("authToken", { httponly: true, secure: true });
+    await userModel.findByIdAndDelete(userId);
 
     res.json({ message: " Account deleted successfully" });
   } catch (error) {
