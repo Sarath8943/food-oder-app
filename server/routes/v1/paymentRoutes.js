@@ -1,5 +1,5 @@
 const e = require("express");
-const payment = require("express").Router();
+const paymentRouter = require("express").Router();
 
 const router = e.Router();
 

@@ -4,7 +4,7 @@ const router = e.Router();
 
 router.post("/")
 router.get("/")
-router.delet("/")
+router.delete("/")
 
 
 
