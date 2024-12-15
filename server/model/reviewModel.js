@@ -2,15 +2,15 @@ const  mongoose = require("mongoose")
 
 const rewiewSchema = new mongoose.Schema({
 
-useId: {
+   menuId: {
     type: mongoose.Schema.Types.ObjectId,
-     ref: "user",
+     ref: "menu",
      required: true,
 },
 
- menuId: {
+ userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "menu",
+    ref: "user",
     required: true,
 
  },
@@ -34,4 +34,4 @@ useId: {
 
 
 }, { timestamps: true });
-module.exports = new mongoose.model("reviews", reviewSchema)
+module.exports = new mongoose.model("reviews", rewiewSchema )
