@@ -1,5 +1,5 @@
    const mongoose = require("mongoose");
-
+ const reviewModel = require("../model/reviewModel")
 const menuSchema  = new mongoose.Schema(
     {
 title: {
@@ -13,10 +13,6 @@ price:{
     type: Number,
     required: true,
 },
-category: {
-    type: String,
-    required:true,
-},
     image: {
         type:String,
         default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmiqR_gB1aE6SmGpJvgdi6j6MZYtLpcSittA&s"
@@ -26,15 +22,14 @@ category: {
     default:0,
   },
   restaurant: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "restaurant",
+    required: true,
   },
 
-  castomerreviwe: {
-    type:String,
-  },
-  isAvailable: {
-      type:Boolean,
-      default:true,
+  reviwe: {
+    type:mongoose.Schema.Types.ObjectId,
+    ref: "review",
   },
    
 }, { timestamps: true });
