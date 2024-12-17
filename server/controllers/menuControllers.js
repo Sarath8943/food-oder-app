@@ -23,12 +23,7 @@ const createMenuItem = async (req, res) => {
 
 console.log(imageUrl, "=========imageUrl");
 
-    const newMenuItem = new Menu({
-      title,
-      description,
-      price,
-      image,
-      restaurant,
+    const newMenuItem = new Menu({title,description,price,image,restaurant,
     });
 
     const savedMenuItem = await newMenuItem.save();

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const billSchema = new mongoose.Schema({
+  
   billId: {
     type: String,
     unique: true,

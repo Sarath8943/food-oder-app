@@ -5,33 +5,45 @@ const { schema } = require("./userModel");
 
 const  cartSchema = new mongoose.schema({
 userId: {
-
-    type:Schema.Schema.type.objectd,
+    type: mongoose.Schema.type.objectd,
     ref:"users",
     required: true,
 },
-   
-     menu:[
-           {
-             menuId: {
-             type: schema.Types.objectd,
-              ref: "menu",
-               required: true,
-             },
-                 price: {
-                 type: Number,
-                  required:true,
-               },
-   
-         },
-         ],
-              totalPrice: {
-               type:Number,
-               required:true,
-               default:0,
+
+restaurantId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Restaurant",
+  required: true,
+},
+
+menu: [
+  {
+    foodId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MenuItem",
+      required: true,
+    },
+    
+ quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+      default: 1,
+    },
+  Price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+],
+    totalPrice: {
+           type:Number,
+          required:true,
+         default:0,
               },
             },
-        { timestamps: true}
-    );
+
+            { timestamps: true });
     
 module.exports = new  mongoose.model("cart", cartSchema);

@@ -1,5 +1,4 @@
 const mongoose =require("mongoose")
-const { validate } = require("./userModel")
 
 const discountSchema = new mongoose.Schema({
     code:{
@@ -10,56 +9,26 @@ const discountSchema = new mongoose.Schema({
         trim: true,
 
     },
-    description: {
-        type: String,
-        default: "no description provided",
-    },
     discount: {
-        type: String,
-        enum: ['percentage','fixed'],
+        type: Number,
         required: true,
     },
     value: {
         type: Number,
         required:true,
-        validate: {
-            validator: function (v) {
-            return v > 0;
         },
 
-        message: props => `${props.value} should br greater than 0!`
-        }
-        },
-         startDate: {
+   endDate:{
             type: Date,
             required: true,
          },
-         endDate:{
-            type: Date,
-            required: true,
 
-         },
-         isActive: {
+isActive: {
             type: Boolean,
             default:true,
          },
-         usageLimit: {
-            type: Number,
-            default: null,
-         },
-         usedcount: {
-            type: Number,
-            default: 0,
-         },
 
-         applicableprodcts: [
-            {
-                type: mongoose.Schema.Types,objectid,
-                ref:"cart"
-
-            }
-         ]
-       
+      
 }, { timestamps: true });
 
-          module.exports = mongoose.nodel("discount", discountSchema);
+ module.exports = mongoose.model("discount", discountSchema);
