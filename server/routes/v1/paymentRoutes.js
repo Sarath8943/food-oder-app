@@ -6,6 +6,7 @@ const router = e.Router();
 
 router.post("/")
 router.post("/")
-
+router.post("/")
+router.post("/")
 
 module.exports = { paymentRouter};

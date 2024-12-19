@@ -8,7 +8,7 @@ const { paymentRouter } = require('./routes/v1/paymentRoutes');
 const { menuRouter } = require('./routes/v1/menuRoutes');
 const { discountRouter } = require('./routes/v1/discountRoutes');
 const { cartRouter } = require('./routes/v1/cartRoutes');
-const { billRouter } = require('./routes/v1/billRoutes');
+const order = require('./model/orderModel');
 
 
 
@@ -34,7 +34,7 @@ app.use("/api/payment",paymentRouter);
 app.use("/api/menu", menuRouter);
 app.use("/api/discount", discountRouter);
 app.use("/api/cart", cartRouter);
-app.use("/api/bill", billRouter);
+app.use("/api/order", order);
 
 app.listen(port, () => {
     console.log(`App listening on port ${PORT}`)

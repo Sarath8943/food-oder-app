@@ -7,7 +7,7 @@ const { createDiscount, allDiscount, discountById, updateDiscount, deleteDiscoun
  const router = e.Router();
 
 
- router.post('/discount-create',createDiscount)
+ router.get('/discount-create',createDiscount)
  router.get("/all-discount",allDiscount)
  router.get('/discount/:id',discountById)
  router.put("/update", updateDiscount)

@@ -7,8 +7,8 @@ const router = e.Router();
 
 router.post("/creact", userAuth, upload.single('image'),createMenuItem)
 router.get("/all-item",getAllMenuItem)
-router.get("/title",getMenuItemById )
-router.put("/update-menu", userAuth,updateMenuItem)
+router.get("/itemid ",getMenuItemById )
+router.put("/update-menu", userAuth,  upload.single("image"),updateMenuItem)
 router.delete("/delete-menu", userAuth ,deleteMenuItem)
 
 

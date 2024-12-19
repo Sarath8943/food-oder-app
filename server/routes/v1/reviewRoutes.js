@@ -5,8 +5,7 @@ const reviewRouter = require("express").Router()
 const router = e.Router();
 
 router.post("/add-review", userAuth,addReview)
-router.get("/menu-review/:menuId", userAuth,getMenuReview)
-router.delete("/delete-review/:reviewId",userAuth,deleteReview)
+router.delete("/delete-review/:reviewId",deleteReview)
 router.get("/average-rating/:menuId ",userAuth,averageRating)
 
 

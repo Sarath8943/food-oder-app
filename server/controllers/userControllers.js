@@ -2,7 +2,6 @@ const userModel = require("../model/userModel.js");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../utils/token.js");
 
-
 const userSignup = async (req, res) => {
   try {
     const { name, email, password, mobile, role } = req.body;
@@ -19,7 +18,7 @@ const userSignup = async (req, res) => {
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
-    
+
     const newUser = new userModel({
       name,
       email,
@@ -52,7 +51,6 @@ const login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-  
 
     if (!passwordMatch) {
       return res.status(400).json({ error: "Incorrect password" });
@@ -62,7 +60,7 @@ const login = async (req, res) => {
     console.log(token, "=======token");
     res.cookie("token", token);
 
-    res.status(200).json({ message: "Login successfull", data: user });
+    res.status(200).json({ message: "Login successfull" });
   } catch (error) {
     console.log(error);
     res
@@ -98,13 +96,12 @@ const userlogout = async (req, res) => {
 
 const checkUser = async (req, res) => {
   try {
-
-const userId = req.user.id
-  const user = await userModel.findById(userId)
-  if (!user){
-    return res.status(401).json({ message: "user not found"})
-  }
-const role = req.user.role
+    const userId = req.user.id;
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(401).json({ message: "user not found" });
+    }
+    const role = req.user.role;
 
     res.status(200).json({ message: "success ", role });
   } catch (error) {
@@ -119,9 +116,10 @@ const changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
 
-   
     if (!oldPassword || !newPassword) {
-      return res.status(400).json({ error: "Both old and new passwords are required." });
+      return res
+        .status(400)
+        .json({ error: "Both old and new passwords are required." });
     }
 
     const user = await userModel.findById(req.user.id);
@@ -130,16 +128,13 @@ const changePassword = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
- 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Old password is incorrect." });
     }
 
-
     const salt = await bcrypt.genSalt();
     const hashedNewPassword = await bcrypt.hash(newPassword, salt);
-
 
     user.password = hashedNewPassword;
     await user.save();
@@ -150,11 +145,10 @@ const changePassword = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-    
+
 const profileUpdate = async (req, res) => {
   try {
-    const { name, email, mobile, profilePic} = req.body;
-
+    const { name, email, mobile, profilePic } = req.body;
 
     const userId = req.user.id;
 
@@ -169,7 +163,7 @@ const profileUpdate = async (req, res) => {
     if (name) user.name = name;
     if (email) user.email = email;
     if (mobile) user.mobile = mobile;
-    if ( profilePic) user. profilePic =  profilePic;
+    if (profilePic) user.profilePic = profilePic;
     const profileUpdate = await user.save();
 
     res.status(200).json({ message: " successs", profileUpdate });
