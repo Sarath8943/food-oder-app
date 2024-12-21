@@ -61,7 +61,7 @@ const deleteReview = async (req, res) => {
 
 try {
 
-    const { reviewId } = req.params;
+    const { reviewId  } = req.params;
     const userId = req.user.id;
     const review = await reviewModel.findOneAndDelete({ _id: review, userId });
     if (!review){

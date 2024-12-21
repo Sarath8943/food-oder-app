@@ -1,48 +1,46 @@
 const mongoose = require("mongoose");
-const { schema } = require("../../model/orderModel");
 
-const restaurantSchema = new schema({
+const restaurantSchema = new mongoose.Schema({
   name: {
-    type: string,
+    type: String,
     required: true,
   },
 
   location: {
-    type: string,
+    type: String,
     required: true,
   },
 
   image: {
-    type: string,
+    type: String,
+    default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI69IS84PGeSJDInvyhd8IPU8_1v3iQU0DeA&s"
   },
 
-  menuItem: [
+  menuItems: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "menu",
     },
   ],
-   
- userId: [
+
+  user: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
     },
   ],
 
-
   rating: {
     type: Number,
-    min:1,
-    max:5,
-  }
+    min: 1,
+    max: 5,
+  },
 
-
-
-
+  mobile: {
+    type: Number,
+  },
 });
 
-
-const  Restaurant = mongoose.model("Restaurant", restaurantSchema)
+const Restaurant = mongoose.model("Restaurant", restaurantSchema);
 
 module.exports = Restaurant;

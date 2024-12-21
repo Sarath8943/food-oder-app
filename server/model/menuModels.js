@@ -23,7 +23,7 @@ price:{
   },
   restaurant: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "restaurant",
+    ref: "Restaurant",
     required: true,
   },
 
@@ -34,4 +34,4 @@ price:{
    
 }, { timestamps: true });
 
-module.exports = new  mongoose.model("menu", menuSchema);
+module.exports = new  mongoose.model("Menu", menuSchema);

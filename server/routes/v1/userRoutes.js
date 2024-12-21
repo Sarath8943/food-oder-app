@@ -1,7 +1,7 @@
 const e = require('express');
 const { userSignup, login, userProfile,checkUser, profileUpdate, userAccountDelete, userlogout, changePassword } = require('../../controllers/userControllers');
 const { userAuth } = require('../../middlewares/userAuth');
-const userRouter = require('express').Router()
+
 
 const router = e.Router();
 
@@ -15,4 +15,6 @@ router.delete('/delete-account',userAuth,userAccountDelete)
 
 router.get('/check-user', userAuth,checkUser);
 
-module.exports = router;
+  const userRouter = router;
+
+module.exports = userRouter;

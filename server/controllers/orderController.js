@@ -1,10 +1,6 @@
 const { model } = require("mongoose");
 const order = require("../model/orderModel");
-const order = require("../model/orderModel");
-const order = require("../model/orderModel");
-const order = require("../model/orderModel");
-const order = require("../model/orderModel");
-const order = require("../model/orderModel");
+
 
 
 

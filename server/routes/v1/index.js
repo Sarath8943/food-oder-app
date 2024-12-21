@@ -1,22 +1,24 @@
-const order = require('../../model/orderModel');
-const { cartRouter } = require('./cartRoutes');
-const { discountRouter } = require('./discountRoutes');
-const { menuRouter } = require('./menuRoutes');
-const { paymentRouter } = require('./paymentRoutes');
-const reviewRouter = require('./reviewRoutes');
-const userRouter = require('./userRoutes')
+const express = require("express");
+const userRouter = require("./userRoutes");
+const reviewRouter = require("./reviewRoutes");
+const restaurantRouter = require("./restaurant");
+const paymentRouter = require("./paymentRoutes");
+const { menuRouter } = require("./menuRoutes");
+const cartRouter = require("./cartRoutes");
+const discountRouter = require("./discountRoutes");
+const orderRouter = require("./orderRoutes");
 
+const router = express.Router();
 
-const v1Router = require('express').Router();
+router.use("/user", userRouter);
+router.use("/restaurant", restaurantRouter);
+router.use("/review", reviewRouter);
+router.use("/payment", paymentRouter);
+router.use("/menu", menuRouter);
+router.use("/discount", discountRouter);
+router.use("/cart", cartRouter);
+router.use("/order", orderRouter);
 
+const apiRouter = router;
 
-v1Router.use("/user", userRouter);
-v1Router.use("/review", reviewRouter);
-v1Router.use("/payment", paymentRouter);
-v1Router.use("/menuitem", menuRouter );
-v1Router.use("/discount", discountRouter);
-v1Router.use("/cart", cartRouter);
-v1Router.use("/order", order);
-
-
-module.exports = v1Router;
+module.exports = apiRouter;
