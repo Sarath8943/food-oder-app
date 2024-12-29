@@ -57,7 +57,7 @@ const login = async (req, res) => {
     }
 
     const token = generateToken(user, "user");
- 
+
     res.cookie("token", token);
 
     res.status(200).json({ message: "Login successfull" });

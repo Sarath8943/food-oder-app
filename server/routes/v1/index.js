@@ -3,10 +3,10 @@ const userRouter = require("./userRoutes");
 const reviewRouter = require("./reviewRoutes");
 const restaurantRouter = require("./restaurant");
 const paymentRouter = require("./paymentRoutes");
-const { menuRouter } = require("./menuRoutes");
 const cartRouter = require("./cartRoutes");
 const discountRouter = require("./discountRoutes");
 const orderRouter = require("./orderRoutes");
+const menuRouter = require("./menuRoutes");
 
 const router = express.Router();
 

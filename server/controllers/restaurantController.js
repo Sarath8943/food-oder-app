@@ -5,10 +5,10 @@ const User = require("../model/userModel");
 const createRestaurant = async (req, res) => {
   try {
     const { name, location, image, rating, menuItems, mobile } = req.body;
-
+  
     const userId = req.user.id;
     const user = await User.findById(userId);
-
+  
     if (!user) {
       return res.status(400).json({ message: " User not  found" });
     }
@@ -23,7 +23,6 @@ const createRestaurant = async (req, res) => {
       image,
       rating,
       menuItems,
-
       location,
       mobile,
       user: userId,
@@ -36,44 +35,73 @@ const createRestaurant = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-const restaurantUpdate = async (req, res) => {
-
-  const { restaurantId } = req.params;
-
-   console.log("Received Restaurant ID:", restaurantId);
-
+const allRestaurant = async (req, res) => {
   try {
-    const { name, location, mobile } = req.body;
+    //console.log("Fetching all restaurants...");
+    const restaurants = await Restaurant.find({});
+    if (restaurants.length === 0) {
+      return res.status(404).json({ error: "No restaurants found" });
+    }
 
-    const userId = req.user.id;
-    
-const user = await User.findById(userId)
-if(!user){
-  return res.status(404).json({ error: "User not found"})
-}
+    res
+      .status(200)
+      .json({ message: "Restaurants fetched successfully", restaurants });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
+const getRestaurantId = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
 
+    if (!restaurantId) {
+      return res.status(400).json({ message: " Invalid estaurant Id" });
+    }
 
     const restaurant = await Restaurant.findById(restaurantId);
- console.log("Found Restaurant:", restaurant);
+    if (!restaurant) {
+      return res.status(404).json({ error: "Restaurant not found " });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Restaurant fetched successfully", restaurant });
+  } catch (error) {
+    console.error("Error fetching restaurant", error.message);
+    res.status(500).json({ error: "Internal server Error" });
+  }
+};
+
+const restaurantUpdate = async (req, res) => {
+  try {
+    const restaurantId = req.params.restaurantId;
+    const userInput = req.body;
+    console.log(restaurantId);
+    // const userId = req.user.id;
+
+    // const user = await User.findById(userId);
+    // if (!user) {
+    //   return res.status(404).json({ error: "User not found" });
+    // }
+
+    const restaurant = await Restaurant.findByIdAndUpdate(
+      restaurantId,
+      userInput,
+      { new: true }
+    );
+
+    console.log("Found Restaurant:", restaurant);
     if (!restaurant) {
       return res.status(404).json({ error: " Restaurant  not found" });
     }
-    if (name) restaurant.name = name;
-    if (location) restaurant.location = location;
-    if (mobile) restaurant.mobile = mobile;
-    const restaurantUpdate = await restaurant.save();
 
-    res.status(200).json({ message: " successfully", restaurantUpdate });
+    // if (name) restaurant.name = name;
+    // if (location) restaurant.location = location;
+    // if (mobile) restaurant.mobile = mobile;
+    // const restaurantUpdate = await restaurant.save();
+
+    res.status(200).json({ message: " successfully", restaurant });
   } catch (error) {
     console.error("Error updating restaurant:", error);
 
@@ -82,15 +110,16 @@ if(!user){
 };
 
 const restaurantDelete = async (req, res) => {
-  const restaurantId = req.params.id;
   try {
-    const userId = req.user.id;
-    if (!userId) {
-      return res.status(404).json({ message: " User not found" });
-    }
+    const restaurantId = req.params.restaurantId;
+    // console.log(restaurantId);
+    // // const userId = req.user.id;
+    // if (!userId) {
+    //   return res.status(404).json({ message: " User not found" });
+    // }
 
-    await Restaurant.findByIdAndDelete(restaurantId);
-    if (!restaurantId) {
+    const deleteRestaurant = await Restaurant.findByIdAndDelete(restaurantId);
+    if (!deleteRestaurant) {
       return res.status(404).json({ error: " Restaurant nof found" });
     }
 
@@ -103,4 +132,10 @@ const restaurantDelete = async (req, res) => {
   }
 };
 
-module.exports = { createRestaurant, restaurantUpdate, restaurantDelete };
+module.exports = {
+  createRestaurant,
+  restaurantUpdate,
+  restaurantDelete,
+  allRestaurant,
+  getRestaurantId,
+};

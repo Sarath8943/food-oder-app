@@ -2,13 +2,16 @@ const express = require("express");
 const apiRouter = require("./routes/v1");
 const cookieParser = require("cookie-parser");
 const { PORT, connectDB } = require("./config/db");
+const cors = require("cors");
 
 const app = express();
 const port = PORT;
 const db = connectDB;
 db();
 
-app.use(express.json());
+app.use(cors());
+
+app.use (express.json());
 
 app.get("/", (req, res) => {
   res.send("hello world");

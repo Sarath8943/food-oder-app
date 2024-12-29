@@ -1,53 +1,84 @@
-
 const cloundinaryInstance = require("../config/cloudinary.js");
-const menuModels = require("../model/menuModels.js");
+const Restaurant = require("../model/restaurantModel.js");
 const reviewModel = require("../model/reviewModel.js");
-const review = require("../model/reviewModel.js");
+const userModel = require("../model/userModel.js");
+const Menu = require("../model/menuModels.js");
+
 
 
 const createMenuItem = async (req, res) => {
   try {
-    const { title, description, price, image, restaurant, role } = req.body;
-
-    if (role !== "admin") {
-      return res.status(403).json({ message: "Only admins can create menu items." });
+    const { restaurantId } = req.params;
+    const userId = req.user.id;
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized user" });
     }
 
-    if (!title || !price || !restaurant) {
-      return res.status(400).json({ message: "Title, price, and restaurant are required." });
+    const { title, price, description, review, rating } = req.body;
+
+    if (!title || !price) {
+      return res.status(400).json({ message: "Title and price are required" });
     }
 
+    const menuItemIsExist = await Menu.findOne({
+      restaurant: restaurantId,
+      title: title,
+    });
+    if (menuItemIsExist) {
+      return res.status(400).json({ message: "Menu item already exists" });
+    }
 
-    console.log(req.file , '======req.file');
- const imageUrl = await cloundinaryInstance.UploadStream.upload(req.file.path)
-
-console.log(imageUrl, "=========imageUrl");
-
-    const newMenuItem = new Menu({title,description,price,image,restaurant,
+    const newMenuItem = new Menu ({
+      title,
+      price,
+      description,
+      restaurant: restaurantId,
+      review,
+      rating: 0,
     });
 
     const savedMenuItem = await newMenuItem.save();
-    res.status(201).json(savedMenuItem);
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    restaurant.menu.push(savedMenuItem._id);
+    await restaurant.save();
+
+    res.status(201).json({
+      message: "Menu Item Created and Added to Restaurant Successfully",
+      savedMenuItem,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error creating menu item.", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
 
-  const  getAllMenuItem = async (req, res) => {
+const getAllMenuItem = async (req, res) => {
   try {
-    const menuItems = await menuModels.find().populate("restaurant").populate("reviwe");
+    const { restaurantId } = req.params;
+    const menuItems = await menuModels
+      .find()
+      .populate("restaurant")
+      .populate("reviwe");
     res.status(200).json(menuItems);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching menu items.", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching menu items.", error: error.message });
   }
 };
 
-
-  const  getMenuItemById = async (req, res) => {
+const getMenuItemById = async (req, res) => {
   try {
     const { id } = req.params;
-    const menuItem = await menuModels.findById(id).populate("restaurant").populate("reviwe");
+    const menuItem = await menuModels
+      .findById(id)
+      .populate("restaurant")
+      .populate("reviwe");
 
     if (!menuItem) {
       return res.status(404).json({ message: "Menu item not found." });
@@ -55,22 +86,27 @@ console.log(imageUrl, "=========imageUrl");
 
     res.status(200).json(menuItem);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching menu item.", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching menu item.", error: error.message });
   }
 };
-
 
 const updateMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
     const { role, ...updates } = req.body;
 
-
     if (role !== "admin") {
-      return res.status(403).json({ message: "Only admins can update menu items." });
+      return res
+        .status(403)
+        .json({ message: "Only admins can update menu items." });
     }
 
-    const updatedMenuItem = await menuModels.findByIdAndUpdate(id, updates, { new: true }).populate("restaurant").populate("reviwe");
+    const updatedMenuItem = await menuModels
+      .findByIdAndUpdate(id, updates, { new: true })
+      .populate("restaurant")
+      .populate("reviwe");
 
     if (!updatedMenuItem) {
       return res.status(404).json({ message: "Menu item not found." });
@@ -78,19 +114,21 @@ const updateMenuItem = async (req, res) => {
 
     res.status(200).json(updatedMenuItem);
   } catch (error) {
-    res.status(500).json({ message: "Error updating menu item.", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error updating menu item.", error: error.message });
   }
 };
 
-
-  const deleteMenuItem = async (req, res) => {
+const deleteMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
 
-
     if (role !== "admin") {
-      return res.status(403).json({ message: "Only admins can delete menu items." });
+      return res
+        .status(403)
+        .json({ message: "Only admins can delete menu items." });
     }
 
     const deletedMenuItem = await menuModels.findByIdAndDelete(id);
@@ -101,12 +139,13 @@ const updateMenuItem = async (req, res) => {
 
     res.status(200).json({ message: "Menu item deleted successfully." });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting menu item.", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting menu item.", error: error.message });
   }
 };
 
-
-  const  ReviewMenuItem = async (req, res) => {
+const ReviewMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
     const { reviewId } = req.body;
@@ -128,10 +167,18 @@ const updateMenuItem = async (req, res) => {
 
     res.status(200).json(menuItem);
   } catch (error) {
-    res.status(500).json({ message: "Error adding review to menu item.", error: error.message });
+    res.status(500).json({
+      message: "Error adding review to menu item.",
+      error: error.message,
+    });
   }
 };
 
-
-
-module.exports = { createMenuItem, getAllMenuItem, getMenuItemById, updateMenuItem,deleteMenuItem, ReviewMenuItem  }
+module.exports = {
+  createMenuItem,
+  getAllMenuItem,
+  getMenuItemById,
+  updateMenuItem,
+  deleteMenuItem,
+  ReviewMenuItem,
+};
