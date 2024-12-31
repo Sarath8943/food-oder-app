@@ -13,11 +13,11 @@ const isAdmin = require("../../middlewares/adminRole.js");
 ;
 const router = e.Router();
 
-router.post("/:restaurantId/create", userAuth, isAdmin, createMenuItem);
+router.post("/:restaurantId/create", userAuth,upload.single("image"), isAdmin, createMenuItem);
 router.get("/all/:restaurantId", getAllMenuItem );
-router.get("/menu/:restaurantId ", getMenuItemById);
-router.put("/:restaurantId/update", userAuth, upload.single("image"), updateMenuItem);
-router.delete("/delete/itemId", userAuth, deleteMenuItem);
+router.get("/items/:menuId", getMenuItemById);
+router.put("/:menuId/update", userAuth, isAdmin,upload.single("image") ,updateMenuItem);
+router.delete("/menu-items/:menuId", userAuth, isAdmin, deleteMenuItem);
 
 const menuRouter = router;
 

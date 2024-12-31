@@ -2,24 +2,16 @@
 const userModel = require("../model/userModel");
 const cartModel = require("../model/cartModel");
 
-// Create Cart for a new user or get existing cart
+
 const createCart = async (req, res) => {
   try {
-    const { userId, restaurantId } = req.body;
+    const  restaurantId  = req.body;
 
-    // Check if the user exists
-    const user = await userModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Check if a cart already exists for the user and restaurant
-    const existingCart = await cartModel.findOne({ userId, restaurantId });
+    const existingCart = await cartModel.findById({ restaurantId });
     if (existingCart) {
       return res.status(200).json({ message: "Cart already exists", cart: existingCart });
     }
 
-    // Create new cart
     const newCart = new Cart({
       userId,
       restaurantId,

@@ -4,18 +4,15 @@ const reviewModel = require("../model/reviewModel.js");
 const addReview = async (req, res) => {
   try {
     const { menuId, rating, comment } = req.body;
-    const userId = req.user._id;
+    console.log(req.body);
     if (!menuId || !rating || !comment) {
       return res.status(400).json({ message: " All fields are required" });
     }
-
+    
+    
     const menuItem = await menuModels.findById(menuId);
-
-    if (!user || role === "user") {
-      returnres.status(400).json({ message: " User is not Authorized" });
-    }
-    if (!menuItem)
-      return res.status(400).json({ messsage: " menu item not found" });
+        if (!menuItem)
+          return res.status(404).json({ messsage: " menu item not found" });
 
     if (rating > 5 || rating <= 1) {
       return res

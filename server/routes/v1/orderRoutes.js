@@ -13,7 +13,7 @@ const router = e.Router();
 
 router.post("/ oder-create", userAuth, createOrder);
 router.get("/all-oder", getAllOrder);
-router.get("/oder-id", getOrderById);
+router.get("/oder-Id", getOrderById);
 router.put("/update-order", userAuth, updateOrder);
 router.delete("/delete-order", deleteOrder);
 

@@ -28,7 +28,7 @@ const menuItemSchema = new mongoose.Schema(
       required: true,
     },
 
-    reviwe: {
+    review: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "review",
     },
@@ -36,6 +36,6 @@ const menuItemSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Menu = mongoose.model("MenuIem", menuItemSchema);
+const Menu = mongoose.model("MenuItems", menuItemSchema);
 
 module.exports = Menu;

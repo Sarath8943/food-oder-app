@@ -1,21 +1,27 @@
 const userModel = require("../model/userModel.js");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../utils/token.js");
+const cloundinaryInstance = require("../config/cloudinary.js");
 
 const userSignup = async (req, res) => {
   try {
-    const { name, email, password, mobile, role } = req.body;
+    const { name, email, password, mobile, role, profilePic } = req.body;
 
     if (!name || !email || !password || !mobile) {
       return res.status(400).json({ error: "All fields are required " });
     }
-
     const userExist = await userModel.findOne({ email: email });
 
     if (userExist) {
       return res.status(400).json({ error: " User already exist" });
     }
-
+    let profilePicUrl;
+    if (req.file && req.file.path) {
+      const imageUpload = await cloundinaryInstance.uploader.upload(
+        req.file.path
+      );
+      profilePicUrl = imageUpload.url;
+    }
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -25,6 +31,7 @@ const userSignup = async (req, res) => {
       password: hashedPassword,
       mobile,
       role: role ? role : "user",
+      profilePic: profilePicUrl,
     });
     const savedUser = await newUser.save();
 
@@ -152,10 +159,14 @@ const profileUpdate = async (req, res) => {
 
     const userId = req.user.id;
 
-    console.log(userId, "userId");
-
     const user = await userModel.findById(userId).select("-password");
 
+    if (req.file && req.file.path) {
+      const imageUpload = await cloundinaryInstance.uploader.upload(
+        req.file.path
+      );
+      user.profilePic = imageUpload.url;
+    }
     if (!user) {
       return res.status(401).json({ error: "user not found" });
     }
@@ -168,7 +179,6 @@ const profileUpdate = async (req, res) => {
 
     res.status(200).json({ message: " success", profileUpdate });
   } catch (error) {
-    // console.log(error);
     res
       .status(error.status || 500)
       .json({ error: error.message || "Internal server Erorr" });

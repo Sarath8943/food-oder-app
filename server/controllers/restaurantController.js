@@ -1,17 +1,22 @@
 const { default: mongoose } = require("mongoose");
 const Restaurant = require("../model/restaurantModel");
 const User = require("../model/userModel");
+const cloundinaryInstance = require("../config/cloudinary");
 
 const createRestaurant = async (req, res) => {
   try {
     const { name, location, image, rating, menuItems, mobile } = req.body;
-  
+
     const userId = req.user.id;
     const user = await User.findById(userId);
-  
+
     if (!user) {
       return res.status(400).json({ message: " User not  found" });
     }
+
+    const uploadResult = await cloundinaryInstance.uploader.upload(
+      req.file.path
+    );
 
     const restaurantExist = await Restaurant.findOne({ name });
     if (restaurantExist) {
@@ -20,7 +25,7 @@ const createRestaurant = async (req, res) => {
 
     const newRestaurant = new Restaurant({
       name,
-      image,
+      image: uploadResult.url,
       rating,
       menuItems,
       location,
@@ -77,29 +82,22 @@ const restaurantUpdate = async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
     const userInput = req.body;
-    console.log(restaurantId);
-    // const userId = req.user.id;
-
-    // const user = await User.findById(userId);
-    // if (!user) {
-    //   return res.status(404).json({ error: "User not found" });
-    // }
-
+    
+    if (req.file && req.file.path) {
+      const uploadResult = await cloundinaryInstance.uploader.upload(
+        req.file.path
+      );
+     userInput.image = uploadResult.url;
+    }
     const restaurant = await Restaurant.findByIdAndUpdate(
       restaurantId,
       userInput,
       { new: true }
     );
-
-    console.log("Found Restaurant:", restaurant);
+  
     if (!restaurant) {
       return res.status(404).json({ error: " Restaurant  not found" });
     }
-
-    // if (name) restaurant.name = name;
-    // if (location) restaurant.location = location;
-    // if (mobile) restaurant.mobile = mobile;
-    // const restaurantUpdate = await restaurant.save();
 
     res.status(200).json({ message: " successfully", restaurant });
   } catch (error) {
@@ -112,13 +110,9 @@ const restaurantUpdate = async (req, res) => {
 const restaurantDelete = async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
-    // console.log(restaurantId);
-    // // const userId = req.user.id;
-    // if (!userId) {
-    //   return res.status(404).json({ message: " User not found" });
-    // }
 
     const deleteRestaurant = await Restaurant.findByIdAndDelete(restaurantId);
+
     if (!deleteRestaurant) {
       return res.status(404).json({ error: " Restaurant nof found" });
     }

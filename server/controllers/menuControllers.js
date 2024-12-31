@@ -3,8 +3,7 @@ const Restaurant = require("../model/restaurantModel.js");
 const reviewModel = require("../model/reviewModel.js");
 const userModel = require("../model/userModel.js");
 const Menu = require("../model/menuModels.js");
-
-
+const upload = require("../middlewares/multer.js");
 
 const createMenuItem = async (req, res) => {
   try {
@@ -15,11 +14,15 @@ const createMenuItem = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized user" });
     }
 
-    const { title, price, description, review, rating } = req.body;
+    const { title, price, description, review, rating, image } = req.body;
 
     if (!title || !price) {
       return res.status(400).json({ message: "Title and price are required" });
     }
+
+    const uploadResult = await cloundinaryInstance.uploader.upload(
+      req.file.path
+    );
 
     const menuItemIsExist = await Menu.findOne({
       restaurant: restaurantId,
@@ -29,13 +32,14 @@ const createMenuItem = async (req, res) => {
       return res.status(400).json({ message: "Menu item already exists" });
     }
 
-    const newMenuItem = new Menu ({
+    const newMenuItem = new Menu({
       title,
       price,
       description,
       restaurant: restaurantId,
       review,
       rating: 0,
+      image: uploadResult.url,
     });
 
     const savedMenuItem = await newMenuItem.save();
@@ -44,7 +48,7 @@ const createMenuItem = async (req, res) => {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    restaurant.menu.push(savedMenuItem._id);
+    restaurant.menuItems.push(savedMenuItem._id);
     await restaurant.save();
 
     res.status(201).json({
@@ -56,15 +60,44 @@ const createMenuItem = async (req, res) => {
   }
 };
 
+const updateMenuItem = async (req, res) => {
+  try {
+    const menuId = req.params.menuId;
+    const userInput = req.body;
+    
+    if (req.file && req.file.path) {
+      const uploadResult = await cloundinaryInstance.uploader.upload(
+        req.file.path
+      );
+      userInput.image = uploadResult.url;
+    }
+
+    const updateMenuItem = await Menu.findByIdAndUpdate(menuId, userInput, {
+      new: true,
+    });
+
+    if (!updateMenuItem) {
+      return res.status(404).json({ error: "MenuItem not found" });
+    }
+
+    res.status(200).json({ message: "successfully", updateMenuItem });
+  } catch (error) {
+    console.error("Error updating menu item:", error);
+    res
+      .status(500)
+      .json({ message: "Error updating menu item.", error: error.message });
+  }
+};
 
 const getAllMenuItem = async (req, res) => {
   try {
-    const { restaurantId } = req.params;
-    const menuItems = await menuModels
-      .find()
-      .populate("restaurant")
-      .populate("reviwe");
-    res.status(200).json(menuItems);
+    const allMenuItem = await Menu.find({});
+    if (allMenuItem.length === 0) {
+      return res.status(404).json({ error: "No menuitem found" });
+    }
+    res
+      .status(200)
+      .json({ message: "MenuItem fetched succcessfully", allMenuItem });
   } catch (error) {
     res
       .status(500)
@@ -74,17 +107,19 @@ const getAllMenuItem = async (req, res) => {
 
 const getMenuItemById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const menuItem = await menuModels
-      .findById(id)
-      .populate("restaurant")
-      .populate("reviwe");
+    const menuId = req.params.menuId;
 
-    if (!menuItem) {
+    if (!menuId) {
       return res.status(404).json({ message: "Menu item not found." });
     }
 
-    res.status(200).json(menuItem);
+    const menuItem = await Menu.findById(menuId);
+    if (!menuItem) {
+      return res.status(404).json({ error: "menuItem not  found" });
+    }
+    res
+      .status(200)
+      .json({ message: "menuItem feached successfully", menuItem });
   } catch (error) {
     res
       .status(500)
@@ -92,46 +127,11 @@ const getMenuItemById = async (req, res) => {
   }
 };
 
-const updateMenuItem = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { role, ...updates } = req.body;
-
-    if (role !== "admin") {
-      return res
-        .status(403)
-        .json({ message: "Only admins can update menu items." });
-    }
-
-    const updatedMenuItem = await menuModels
-      .findByIdAndUpdate(id, updates, { new: true })
-      .populate("restaurant")
-      .populate("reviwe");
-
-    if (!updatedMenuItem) {
-      return res.status(404).json({ message: "Menu item not found." });
-    }
-
-    res.status(200).json(updatedMenuItem);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating menu item.", error: error.message });
-  }
-};
-
 const deleteMenuItem = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { role } = req.body;
+    const { menuId } = req.params;
 
-    if (role !== "admin") {
-      return res
-        .status(403)
-        .json({ message: "Only admins can delete menu items." });
-    }
-
-    const deletedMenuItem = await menuModels.findByIdAndDelete(id);
+    const deletedMenuItem = await Menu.findByIdAndDelete(menuId);
 
     if (!deletedMenuItem) {
       return res.status(404).json({ message: "Menu item not found." });
@@ -145,40 +145,10 @@ const deleteMenuItem = async (req, res) => {
   }
 };
 
-const ReviewMenuItem = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { reviewId } = req.body;
-
-    const menuItem = await menuModels.findById(id);
-
-    if (!menuItem) {
-      return res.status(404).json({ message: "Menu item not found." });
-    }
-
-    const review = await reviewModel.findById(reviewId);
-
-    if (!review) {
-      return res.status(404).json({ message: "Review not found." });
-    }
-
-    menuItem.review = reviewId;
-    await menuItem.save();
-
-    res.status(200).json(menuItem);
-  } catch (error) {
-    res.status(500).json({
-      message: "Error adding review to menu item.",
-      error: error.message,
-    });
-  }
-};
-
 module.exports = {
   createMenuItem,
   getAllMenuItem,
   getMenuItemById,
   updateMenuItem,
   deleteMenuItem,
-  ReviewMenuItem,
 };
