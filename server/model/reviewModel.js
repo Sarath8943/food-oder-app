@@ -26,6 +26,11 @@ const rewiewSchema = new mongoose.Schema({
     trim: true,
     maxlength:500,
 
+ },  
+    orderId: {
+      type: String,
+      ref: "order",
+      required: true,
  },
    createdAt: {
     type: Date,
@@ -33,5 +38,6 @@ const rewiewSchema = new mongoose.Schema({
    },
 
 
+   
 }, { timestamps: true });
 module.exports = new mongoose.model("reviews", rewiewSchema )

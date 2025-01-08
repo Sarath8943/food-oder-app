@@ -2,8 +2,6 @@ const { model } = require("mongoose");
 const order = require("../model/orderModel");
 
 
-
-
 const createOrder = async (req, res) => {
     try {
       const { user, deliveryAddressId, cartId, discount, totalPrice, status } = req.body;

@@ -4,10 +4,15 @@ export const Footer = () => {
   return (
     <footer className="footer bg-base-200 text-base-content p-10">
       <nav>
-        <h6 className="footer-title">
+        <h6 className="footer-title text-3xl">
           FOOD <span className="text-red-500">EAT</span>
         </h6>
-        <p></p>
+        <p className="font-semibold  text-start" >
+           Food is not just something we eat; it's an experience that brings joy,<br />
+           comfort, and energy to our lives. Eating is more than a necessity—it's a celebration of flavors,
+           <br />cultures, and traditions. Every bite tells a story,<br />
+            and every meal is an opportunity to nourish not just the body,<br /> but the soul. So, 
+            savor every moment, and let the food you eat bring happiness and connection to your day.</p>
       </nav>
       <nav>
         <h6 className="footer-title">Links</h6>

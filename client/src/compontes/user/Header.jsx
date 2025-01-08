@@ -3,7 +3,7 @@ import React from 'react'
 export const Header = () => {
   return (
     <div className="flex justify-between  items-center  px-36 h-20">
-       <h1 className='text-lg font-semibold py-9' >
+       <h1 className='text-3xl font-semibold py-9' >
         FOOD <span className='text-red-500'>EAT</span>
         
         </h1>

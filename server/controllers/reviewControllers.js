@@ -3,32 +3,27 @@ const reviewModel = require("../model/reviewModel.js");
 
 const addReview = async (req, res) => {
   try {
-    const { menuId, rating, comment } = req.body;
-    console.log(req.body);
-    if (!menuId || !rating || !comment) {
-      return res.status(400).json({ message: " All fields are required" });
+    const { menuId, userId, rating, comment, orderId } = req.body;
+
+    if (!menuId || !rating || !comment || !orderId) {
+      return res.status(400).json({ message: "All fields are required" });
     }
-    
-    
     const menuItem = await menuModels.findById(menuId);
-        if (!menuItem)
-          return res.status(404).json({ messsage: " menu item not found" });
-
-    if (rating > 5 || rating <= 1) {
-      return res
-        .status(400)
-        .json({ message: " please provide a proper rating" });
+    if (!menuItem) {
+      return res.status(404).json({ message: "Menu item not found" });
     }
 
-    const review = await reviewModel.findOnAndUpdate(
-      { userId, menuId },
+    if (rating > 5 || rating < 1) {
+      return res.status(400).json({ message: "Please provide a proper rating" });
+    }
+
+    const review = await reviewModel.findOneAndUpdate(
+      { userId, menuId, orderId },
       { rating, comment },
       { new: true, upsert: true }
     );
 
-    res
-      .status(201)
-      .json({ message: " review created successfully", data: review });
+    res.status(201).json({ message: "Review created successfully", data: review });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
   }
