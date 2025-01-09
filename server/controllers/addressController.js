@@ -62,7 +62,7 @@ const getAllAddresses = async (req, res) => {
 
 // Get a specific address by ID
 
-const getAddress = async (req, res) => {
+const getAddressById = async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -70,9 +70,9 @@ const getAddress = async (req, res) => {
       return res.status(404).json({ message: "No user found" });
     }
     const addressId = req.params.addressId;
-    if (!addressId) {
-      return res.status(400).json({ message: "Address ID is required" });
-    }
+
+    console.log("Address ID:", addressId);
+
     const address = await Address.findById(addressId);
     if (!address) {
       return res.status(404).json({ message: "Address not found" });
@@ -84,9 +84,8 @@ const getAddress = async (req, res) => {
   }
 };
 
-
 // Update a specific address by ID
-const updateAddress = async (req, res) => {
+const updateAddressById = async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -94,7 +93,9 @@ const updateAddress = async (req, res) => {
       return res.status(404).json({ message: "No user found" });
     }
 
-    const address = await Address.findById(req.params.id);
+    const addressId = req.params.addressId;
+
+    const address = await Address.findById(addressId);
     if (!address) {
       return res.status(404).json({ message: "Address not found" });
     }
@@ -134,13 +135,12 @@ const deleteAddress = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized user" });
     }
 
-    const addressId = req.params.addressId;
-
+    const addressId = req.params.Id;
+    console.log("Request params:", req.params); // Log all parameters
     if (!addressId) {
       return res.status(400).json({ message: "Address ID is required" });
     }
 
-    console.log("Attempting to delete address with ID:", addressId);
     const address = await Address.findByIdAndDelete(addressId);
     if (!address) {
       return res.status(404).json({ message: "Address not found" });
@@ -156,7 +156,7 @@ const deleteAddress = async (req, res) => {
 module.exports = {
   getAllAddresses,
   createAddress,
-  getAddress
-  updateAddress,
+  getAddressById,
+  updateAddressById,
   deleteAddress,
 }; // Added missing exports

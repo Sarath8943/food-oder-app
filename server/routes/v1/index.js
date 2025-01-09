@@ -7,7 +7,7 @@ const cartRouter = require("./cartRoutes");
 const discountRouter = require("./discountRoutes");
 const orderRouter = require("./orderRoutes");
 const menuRouter = require("./menuRoutes");
-const addressRouter = require("./adderssRoutes");
+const addressRouter = require("./addressRoutes");
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.use("/menu", menuRouter);
 router.use("/discount", discountRouter);
 router.use("/cart", cartRouter);
 router.use("/order", orderRouter);
-router.use("/adderss", addressRouter);
+router.use("/address", addressRouter);
 const apiRouter = router;
 
 module.exports = apiRouter;
