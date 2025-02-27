@@ -1,29 +1,55 @@
 const menuModels = require("../model/menuModels.js");
+const Order = require("../model/orderModel.js");
+const Review = require("../model/reviewModel.js");
 const reviewModel = require("../model/reviewModel.js");
 
 const addReview = async (req, res) => {
   try {
-    const { menuId, userId, rating, comment, orderId } = req.body;
+    const { menuId, rating, comment, orderId } = req.body;
 
-    if (!menuId || !rating || !comment || !orderId) {
-      return res.status(400).json({ message: "All fields are required" });
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User ID is required" });
     }
-    const menuItem = await menuModels.findById(menuId);
+
+    const menuItem = await Menu.findById(menuId);
     if (!menuItem) {
       return res.status(404).json({ message: "Menu item not found" });
     }
 
-    if (rating > 5 || rating < 1) {
-      return res.status(400).json({ message: "Please provide a proper rating" });
+    const order = await Order.findById(orderId).populate("cartId");
+    if (!order || order.status !== " delivered") {
+      return res
+        .status(404)
+        .json({ message: "rder not delivered or not found" });
     }
 
-    const review = await reviewModel.findOneAndUpdate(
-      { userId, menuId, orderId },
-      { rating, comment },
-      { new: true, upsert: true }
+    const isMenuInOrder = order.items.some(
+      (item) => item.menuId.toString() === menuId.toString()
     );
-
-    res.status(201).json({ message: "Review created successfully", data: review });
+    if (!isMenuInOrder) {
+      return res
+        .status(400)
+        .json({ message: "Menu item not part of the order." });
+    }
+    const exisitingreview = await Review.findOne({ userId, menuId, orderId });
+    if (existingReview) {
+      return res
+        .status(400)
+        .json({ message: "Review already exists for this order." });
+    }
+    const newReview = new Review({
+      menuId,
+      userId,
+      orderId,
+      rating,
+      comment,
+    });
+    const savedReview = await newReview.save();
+    res
+      .status(201)
+      .json({ message: "Review created successfully", review: savedReview });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
   }

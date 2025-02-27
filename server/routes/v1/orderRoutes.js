@@ -8,14 +8,14 @@ const {
   getAllOrder,
   getOrderById,
 } = require("../../controllers/orderController");
-const  userRole   = require("../../middlewares/userRole")
+const userRole = require("../../middlewares/userRole");
 
 const router = e.Router();
 
-router.post("/ oder-create", userAuth, userRole,  createOrder);
-router.get("/all-oder", getAllOrder);
-router.get("/oder-Id", getOrderById);
-router.put("/update-order", userAuth, updateOrder);
+router.post("/create", userAuth, userRole, createOrder);
+router.get("/get-all-orders",userAuth,userRole, getAllOrder);
+router.get("/:orderId", getOrderById);
+router.put("/update-order", userAuth,userRole, updateOrder);
 router.delete("/delete-order", deleteOrder);
 
 const orderRouter = router;

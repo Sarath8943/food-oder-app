@@ -5,15 +5,17 @@ const {
   discountById,
   updateDiscount,
   deleteDiscount,
-} = require("../../controllers/disscontControllers");
+} = require("../../controllers/discontControllers");
+const { userAuth } = require("../../middlewares/userAuth");
+const isAdmin = require("../../middlewares/adminRole");
 
 const router = e.Router();
 
-router.get("/discount-create", createDiscount);
-router.get("/all-discount", allDiscount);
-router.get("/discount/:id", discountById);
-router.put("/update", updateDiscount);
-router.delete("/ delete-discount", deleteDiscount);
+router.post("/create",userAuth, isAdmin, createDiscount);
+router.get("/all-discount",userAuth, isAdmin, allDiscount);
+router.get("/discount/:id",userAuth,isAdmin, discountById);
+router.put("/update/:id",userAuth,isAdmin, updateDiscount);
+router.delete("/delete/:id", userAuth,isAdmin,deleteDiscount);
 
 const discountRouter = router;
 
