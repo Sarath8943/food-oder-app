@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -16,7 +15,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-     
+
       required: true,
       minLength: 6,
     },
@@ -25,7 +24,7 @@ const userSchema = new mongoose.Schema(
       requirede: true,
       unique: true,
     },
-   profilePic : {
+    profilePic: {
       type: String,
       default:
         "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg",

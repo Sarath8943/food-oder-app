@@ -11,7 +11,7 @@ export const UserLayout = () => {
       <div className="min-h-96">
         <Outlet />
       </div>
-
+      
       <Footer />
     </div>
   );

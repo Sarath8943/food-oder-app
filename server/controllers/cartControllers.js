@@ -1,13 +1,13 @@
 const Cart = require("../model/cartModel");
 const MenuItem = require("../model/menuModels");
 const Restauarnt = require("../model/restaurantModel");
-const User = require("../model/userModel");
+const userModel = require("../model/userModel")
 
 const addToCart = async (req, res) => {
   const { userId, restaurantId, foodId, quantity } = req.body;
 
   try {
-    const user = await User.findById(req.user.id);
+    const user = await userModel.findById(req.user.id);
 
     if (!user) {
       return res.status(401).json({ message: "Unauthorized user" });
@@ -160,14 +160,12 @@ const removeCart = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const cart = await Cart.findOneAndUpdate(
-       { items: { foodId } }
-    );
+    const cart = await Cart.findOneAndUpdate({ items: { foodId } });
 
     if (!cart) {
       return res.status(400).json({ message: "No items found in cart" });
     }
-   
+
     res.status(200).json({ message: "Cart item remove successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });

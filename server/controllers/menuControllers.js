@@ -64,7 +64,7 @@ const updateMenuItem = async (req, res) => {
   try {
     const menuId = req.params.menuId;
     const userInput = req.body;
-    
+
     if (req.file && req.file.path) {
       const uploadResult = await cloundinaryInstance.uploader.upload(
         req.file.path
